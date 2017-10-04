@@ -9,7 +9,6 @@ function Particle(x,y) {
     this.G = 0;
     this.B = 0;
     this.A = 150;
-    this.i = 0;
 
     this.move = function() {
         this.pos.add(this.vel);
@@ -18,8 +17,6 @@ function Particle(x,y) {
     this.show = function() {
         fill(this.R, this.G, this.B, this.A);
         ellipse(this.pos.x, this.pos.y, this.r, this.r);
-        // stroke(0);
-        // text(this.i, this.pos.x, this.pos.y);
     }
 
     this.offScreen = function() {
