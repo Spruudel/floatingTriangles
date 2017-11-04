@@ -10,7 +10,7 @@ function Particle(x, y) {
     }
 
     this.show = function() {
-        fill(0, 0, 0, this.alpha);
+        fill(255, this.alpha);
         ellipse(this.pos.x, this.pos.y, this.r, this.r);
     }
 
