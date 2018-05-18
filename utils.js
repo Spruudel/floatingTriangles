@@ -4,7 +4,9 @@ Array.prototype.flatten = function() {
         if(Array.isArray(this[i])) {
             ret = ret.concat(this[i].flatten());
         } else {
-            ret.push(this[i]);
+            if (typeof this[i] != 'undefined') {
+                ret.push(this[i]);
+            }
         }
     }
     return ret;
