@@ -39,29 +39,25 @@ function Particle(x, y) {
 		let [gX, gY] = this.gridPos();
 		let toCheck = [];
 
-		toCheck = toCheck.concat(grid[gX - 1, gY - 1]);
-		toCheck = toCheck.concat(grid[gX,     gY - 1]);
-		toCheck = toCheck.concat(grid[gX + 1, gY - 1]);
-
-		toCheck = toCheck.concat(grid[gX - 1, gY]);
-		toCheck = toCheck.concat(grid[gX,     gY]);
-		toCheck = toCheck.concat(grid[gX + 1, gY]);
-
-		toCheck = toCheck.concat(grid[gX - 1, gY + 1]);
-		toCheck = toCheck.concat(grid[gX,     gY + 1]);
-		toCheck = toCheck.concat(grid[gX + 1, gY + 1]);
-
-        toCheck.flatten();
-
-	    console.log(toCheck);
+        for (let i of [-1, 0, 1])
+            for (let j of [-1, 0, 1])
+                if (inGrid(gX+i, gY+j)) {
+                    let toPush = grid[gX + i][gY + j];
+                    if (toPush != undefined)
+                        toCheck = toCheck.concat(toPush);
+                }
 
         for (i = 0; i < toCheck.length; i++) {
             var distance = dist(this.pos.x, this.pos.y, particles[toCheck[i]].pos.x, particles[toCheck[i]].pos.y);
             if (distance < maxDistance && distance > 0.01) {
-                neighbours.push(i);
+                neighbours.push(toCheck[i]);
             }
         }
 
         return neighbours;
     }
+}
+
+function inGrid(x, y) {
+    return x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
 }
