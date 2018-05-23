@@ -42,7 +42,7 @@ function Particle(x, y) {
         for (let i of [-1, 0, 1])
             for (let j of [-1, 0, 1])
                 if (inGrid(gX+i, gY+j)) {
-                    let toPush = grid[gX + i][gY + j];
+                    let toPush = grid[0][gX + i][gY + j];
                     if (toPush != undefined)
                         toCheck = toCheck.concat(toPush);
                 }

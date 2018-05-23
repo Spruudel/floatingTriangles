@@ -1,10 +1,15 @@
-let debugging = false;
+let debugging = true;
 
 let particles = [];
+let bholes = [];
 
 let maxDistance = 180;
 
 let grid;
+
+let partGrid;
+let holeGrid;
+
 let gridWidth;
 let gridHeight;
 
@@ -33,11 +38,13 @@ function draw() {
 
     	for (let x = 0; x < gridWidth; x++) {
     		for (let y = 0; y < gridHeight; y++) {
-    			text(grid[x][y].length, x * maxDistance + 10, y * maxDistance + 20);
+                fill(255, 180);
+    			text(grid[0][x][y].length + grid[1][x][y].length, x * maxDistance + 10, y * maxDistance + 20);
     		}
     	}
     }
 
+    // Particle
 	for (var i = 0; i < particles.length; i++) {
 		if (particles[i].offScreen()) {
 			particles.splice(i, 1);
@@ -51,35 +58,78 @@ function draw() {
         particles[i].show();
     }
 
+    // Black Hole
+    for (var i = 0; i < bholes.length; i++) {
+        noStroke();
+        bholes[i].show();
+    }
 
 
     stroke(115, 100);
-    for (var i = 0; i < particles.length; i++) {
-        var neighbours = particles[i].checkDist();
+    for (let i = 0; i < particles.length; i++) {
+        let neighbours = particles[i].checkDist();
         if (neighbours.length > 0) {
-            for (var j = 0; j < neighbours.length; j++) {
+            for (let j = 0; j < neighbours.length; j++) {
                 line(particles[i].pos.x, particles[i].pos.y, particles[neighbours[j]].pos.x, particles[neighbours[j]].pos.y);
             }
         }
     }
+
+
+    for (let i = 0; i < bholes.length; i++) {
+        let neighbours = bholes[i].checkDist();
+        if (neighbours.length > 0) {
+            for (let j = 0; j < neighbours.length; j++) {
+                stroke(255, 20);
+                line(bholes[i].pos.x, bholes[i].pos.y, particles[neighbours[j]].pos.x, particles[neighbours[j]].pos.y);
+            }
+        }
+    }
+
+    frameRate();
 }
+
+function mouseClicked() {
+    bholes.push(new BHole(mouseX, mouseY));
+    return false;
+}
+
 
 function newParticle() {
     particles.push(new Particle(random(width), random(height)));
 }
 
 function updateGrid() {
-	grid = [];
+	partGrid = [];
 
 	for (let i = 0; i < gridWidth; i++) {
-		grid.push([]);
+		partGrid.push([]);
 		for (let k = 0; k < gridHeight; k++) {
-			grid[i].push([]);
+			partGrid[i].push([]);
 		}
 	}
 
 	for (let i = 0; i < particles.length; i++) {
 		gridPos = particles[i].gridPos();
-		grid[gridPos[0]][gridPos[1]].push(i);
+		partGrid[gridPos[0]][gridPos[1]].push(i);
 	}
+
+
+    holeGrid = [];
+
+	for (let i = 0; i < gridWidth; i++) {
+		holeGrid.push([]);
+		for (let k = 0; k < gridHeight; k++) {
+			holeGrid[i].push([]);
+		}
+	}
+
+	for (let i = 0; i < bholes.length; i++) {
+		gridPos = bholes[i].gridPos();
+		holeGrid[gridPos[0]][gridPos[1]].push(i);
+	}
+
+    grid = [];
+    grid[0] = partGrid;
+    grid[1] = holeGrid;
 }
