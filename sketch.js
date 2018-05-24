@@ -1,4 +1,4 @@
-let debugging = true;
+let debugging = false;
 
 let particles = [];
 let bholes = [];
@@ -34,6 +34,7 @@ function draw() {
 	updateGrid();
 
     if (debugging == true) {
+        stroke(115, 100);
     	for (let i = 0; i < gridWidth; i++) line(i * maxDistance, 0, i * maxDistance, windowHeight);
 
     	for (let i = 0; i < gridHeight; i++) line(0, i * maxDistance, windowWidth, i * maxDistance);
@@ -60,12 +61,6 @@ function draw() {
         particles[i].show();
     }
 
-    // Black Hole
-    for (var i = 0; i < bholes.length; i++) {
-        noStroke();
-        bholes[i].show();
-    }
-
 
     stroke(115, 100);
     for (let i = 0; i < particles.length; i++) {
@@ -78,15 +73,25 @@ function draw() {
     }
 
 
+    // Black Hole
+    for (var i = 0; i < bholes.length; i++) {
+        noStroke();
+        bholes[i].show();
+    }
+
     for (let i = 0; i < bholes.length; i++) {
         let neighbours = bholes[i].checkDist();
         if (neighbours.length > 0) {
             for (let j = 0; j < neighbours.length; j++) {
-                stroke(255, 20);
-                line(bholes[i].pos.x, bholes[i].pos.y, particles[neighbours[j]].pos.x, particles[neighbours[j]].pos.y);
+                //stroke(255, 20);
+                //line(bholes[i].pos.x, bholes[i].pos.y, particles[neighbours[j]].pos.x, particles[neighbours[j]].pos.y);
 
                 let vecPartToHole = p5.Vector.sub(bholes[i].pos, particles[neighbours[j]].pos);
 
+                if (vecPartToHole.mag() <= bholes[i].r - particles[neighbours[j]].r * 2) {
+                    particles.splice(neighbours[j], 1);
+        			      newParticle();
+                }
 
                 let distProp = (maxDistance - vecPartToHole.mag()) / maxDistance;
 

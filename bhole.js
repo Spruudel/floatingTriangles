@@ -2,8 +2,8 @@ function BHole(x, y) {
     this.pos = createVector(x, y);
     //this.vel = p5.Vector.random2D();
     //this.vel.mult(random(0.1, 0.6));
-    this.r = 10;
-    this.alpha = 240;
+    this.r = 20;
+    this.alpha = 225;
 
 	this.gridPos = function() {
 		let pX = floor(this.pos.x / maxDistance);
