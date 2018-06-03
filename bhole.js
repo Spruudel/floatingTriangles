@@ -3,9 +3,9 @@ function BHole(x, y) {
 	this.r = 20;
 	this.alpha = 225;
 
-	this.angleDistance = 60;
+	this.angleDistance = 40;
 	this.nAnimParticles = floor(360 / this.angleDistance);
-	this.nAnimParticleWaves = 15;
+	this.nAnimParticleWaves = 20;
 	this.animParticles = [];
 
 	this.animSpeed = 0.007;
@@ -96,10 +96,10 @@ function BHAnimParticle(parent, angle, offset) {
 	this.size = this.init_size;
 	this.alpha = this.init_alpha;
 
-	this.pos = createVector(this.parent.pos.x + ((this.parent.r + this.r) / 2) * cos(this.angle), this.parent.pos.y + ((this.parent.r + this.r) / 2) * sin(this.angle));
+	this.pos = createVector(this.parent.pos.x + ((this.parent.r + this.r) / 2 - this.size / 2) * cos(this.angle), this.parent.pos.y + ((this.parent.r + this.r) / 2 - this.size / 2) * sin(this.angle));
 
 	this.calcPos = function() {
-		this.pos.set(this.parent.pos.x + ((this.parent.r + this.r) / 2) * cos(this.angle), this.parent.pos.y + ((this.parent.r + this.r) / 2) * sin(this.angle));
+		this.pos.set(this.parent.pos.x + ((this.parent.r + this.r) / 2 - this.size / 2) * cos(this.angle), this.parent.pos.y + ((this.parent.r + this.r) / 2 - this.size / 2) * sin(this.angle));
 	}
 
 	this.step = function() {
@@ -110,7 +110,7 @@ function BHAnimParticle(parent, angle, offset) {
 
 
 		this.calcPos();
-		this.steps = (this.steps + this.animSpeed) % 1;
+		this.steps = this.steps + this.animSpeed >= 1 ? 0 : this.steps + this.animSpeed;
 	}
 
 	this.show = function() {
