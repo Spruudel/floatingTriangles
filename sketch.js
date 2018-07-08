@@ -48,6 +48,12 @@ function draw() {
 		}
 	}
 
+	// Black Hole
+	for (var i = 0; i < bholes.length; i++) {
+		noStroke();
+		bholes[i].show();
+	}
+
 	// Particle
 	for (var i = 0; i < particles.length; i++) {
 		if (particles[i].offScreen()) {
@@ -62,8 +68,8 @@ function draw() {
 		particles[i].show();
 	}
 
-
-	stroke(115, 100);
+	// Particle - Particle lines
+	stroke(115, 80);
 	for (let i = 0; i < particles.length; i++) {
 		let neighbours = particles[i].checkDist();
 		if (neighbours.length > 0) {
@@ -73,30 +79,28 @@ function draw() {
 		}
 	}
 
-
-	// Black Hole
-	for (var i = 0; i < bholes.length; i++) {
-		noStroke();
-		bholes[i].show();
-	}
-
+	// Black Hole: Gravity and Destruction
 	for (let i = 0; i < bholes.length; i++) {
 		let neighbours = bholes[i].checkDist();
 		if (neighbours.length > 0) {
 			for (let j = 0; j < neighbours.length; j++) {
-				//stroke(255, 20);
-				//line(bholes[i].pos.x, bholes[i].pos.y, particles[neighbours[j]].pos.x, particles[neighbours[j]].pos.y);
+				let curNeighbour = particles[neighbours[j]];
 
-				let vecPartToHole = p5.Vector.sub(bholes[i].pos, particles[neighbours[j]].pos);
+				let vecPartToHole = p5.Vector.sub(bholes[i].pos, curNeighbour.pos);
 
-				if (vecPartToHole.mag() <= bholes[i].r - particles[neighbours[j]].r * 2) {
-					particles.splice(neighbours[j], 1);
-					newParticle();
+				if (vecPartToHole.mag() <= bholes[i].r - curNeighbour.r * 2) {
+					if (curNeighbour.dying > 0) {
+						curNeighbour.r = lerp(0, curNeighbour.initR, curNeighbour.dying);
+						curNeighbour.dying = (curNeighbour.dying - curNeighbour.dyingRate < 0) ? 0 : curNeighbour.dying - curNeighbour.dyingRate;
+					} else {
+						particles.splice(neighbours[j], 1);
+						newParticle();
+					}
 				}
 
 				let distProp = (maxDistance - vecPartToHole.mag()) / maxDistance;
 
-				particles[neighbours[j]].vel.add(p5.Vector.mult(vecPartToHole, distProp * gravity));
+				curNeighbour.vel.add(p5.Vector.mult(vecPartToHole, distProp * gravity));
 			}
 		}
 	}
