@@ -1,7 +1,9 @@
-function BHole(x, y) {
+function Sun(x, y) {
 	this.pos = createVector(x, y);
 	this.r = 20;
 	this.alpha = 225;
+
+	this.radiance = 3000;
 
 	this.angleDistance = 40;
 	this.nAnimParticles = floor(360 / this.angleDistance);
@@ -13,7 +15,7 @@ function BHole(x, y) {
 	this.createParticles = function(offset) {
 		for (let i = 0; i < this.nAnimParticles; i++) {
 			let curAngle = (this.angleDistance * i) % 360;
-			this.animParticles.push(new BHAnimParticle(this, curAngle, offset));
+			this.animParticles.push(new SunAnimParticle(this, curAngle, offset));
 		}
 	}
 
@@ -29,7 +31,8 @@ function BHole(x, y) {
 
 	this.show = function() {
 		push();
-		fill(color('black'), this.alpha);
+		let sunyellow = color('#FFCC00');
+		fill(sunyellow, this.alpha);
 		ellipse(this.pos.x, this.pos.y, this.r);
 
 		for (let i = 0; i < this.animParticles.length; i++) {
@@ -75,7 +78,7 @@ function BHole(x, y) {
 	}
 }
 
-function BHAnimParticle(parent, angle, offset) {
+function SunAnimParticle(parent, angle, offset) {
 	this.parent = parent;
 
 	this.animSpeed = this.parent.animSpeed;
@@ -118,7 +121,7 @@ function BHAnimParticle(parent, angle, offset) {
 	this.show = function() {
 		push();
 		noStroke();
-		fill(color('black'), this.alpha);
+		fill(255, 204, 0, this.alpha);
 		ellipse(this.pos.x, this.pos.y, this.size, this.size);
 		pop();
 	}

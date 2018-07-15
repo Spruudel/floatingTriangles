@@ -2,7 +2,7 @@ function Particle(x, y) {
 	this.pos = createVector(x, y);
 	this.vel = p5.Vector.random2D();
 	this.vel.mult(random(0.1, 0.6));
-	this.initR = 3;
+	this.initR = 1.5;
 	this.r = this.initR;
 	this.alpha = 150;
 
@@ -25,11 +25,11 @@ function Particle(x, y) {
 
 	this.show = function() {
 		fill(255, this.alpha);
-		ellipse(this.pos.x, this.pos.y, this.r, this.r);
+		ellipse(this.pos.x, this.pos.y, this.r * 2);
 	}
 
 	this.offScreen = function() {
-		let nextPos = this.pos.add(this.vel);
+		let nextPos = this.pos.copy().add(this.vel);
 
 		if (nextPos.x <= 0 || nextPos.x >= width || nextPos.y <= 0 || nextPos.y >= height) {
 			return true;

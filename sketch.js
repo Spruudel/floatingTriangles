@@ -2,6 +2,7 @@ let debugging = false;
 
 let particles = [];
 let bholes = [];
+let suns = [];
 
 let maxDistance = 180;
 let gravity = 0.00009;
@@ -10,6 +11,7 @@ let grid;
 
 let partGrid;
 let holeGrid;
+let sunGrid;
 
 let gridWidth;
 let gridHeight;
@@ -43,7 +45,7 @@ function draw() {
 		for (let x = 0; x < gridWidth; x++) {
 			for (let y = 0; y < gridHeight; y++) {
 				fill(255, 180);
-				text(grid[0][x][y].length + grid[1][x][y].length, x * maxDistance + 10, y * maxDistance + 20);
+				text(grid[0][x][y].length + grid[1][x][y].length + grid[2][x][y].length, x * maxDistance + 10, y * maxDistance + 20);
 			}
 		}
 	}
@@ -52,6 +54,12 @@ function draw() {
 	for (var i = 0; i < bholes.length; i++) {
 		noStroke();
 		bholes[i].show();
+	}
+
+	// Sun
+	for (var i = 0; i < suns.length; i++) {
+		noStroke();
+		suns[i].show();
 	}
 
 	// Particle
@@ -104,10 +112,83 @@ function draw() {
 			}
 		}
 	}
+
+	// Sun: Gravity and Destruction and Light??
+	for (let i = 0; i < suns.length; i++) {
+		let neighbours = suns[i].checkDist();
+		if (neighbours.length > 0) {
+			for (let j = 0; j < neighbours.length; j++) {
+				let curNeighbour = particles[neighbours[j]];
+
+				let vecPartToHole = p5.Vector.sub(suns[i].pos, curNeighbour.pos);
+
+				if (vecPartToHole.mag() <= suns[i].r - curNeighbour.r * 2) {
+					if (curNeighbour.dying > 0) {
+						curNeighbour.r = lerp(0, curNeighbour.initR, curNeighbour.dying);
+						curNeighbour.dying = (curNeighbour.dying - curNeighbour.dyingRate < 0) ? 0 : curNeighbour.dying - curNeighbour.dyingRate;
+					} else {
+						particles.splice(neighbours[j], 1);
+						newParticle();
+					}
+				}
+
+				let distProp = (maxDistance - vecPartToHole.mag()) / maxDistance;
+
+				curNeighbour.vel.add(p5.Vector.mult(vecPartToHole, distProp * gravity));
+			}
+		}
+	}
+
+	// Shadows
+	push();
+	for (let i = 0; i < suns.length; i++) {
+		for (var j = 0; j < particles.length; j++) {
+			let curParticle = particles[j];
+
+			let vecSunToPart = p5.Vector.sub(curParticle.pos, suns[i].pos);
+
+			let PointR = p5.Vector.add(curParticle.pos, vecSunToPart.copy().rotate(90).normalize().mult(curParticle.r));
+			let PointL = p5.Vector.add(curParticle.pos, vecSunToPart.copy().rotate(-90).normalize().mult(curParticle.r));
+
+			fill(0, 30);
+			noStroke();
+			ellipse(PointL.x, PointL.y, 1, 1);
+			ellipse(PointR.x, PointR.y, 1, 1);
+
+			let rectEndR = PointR.copy().add(vecSunToPart.copy().setMag(windowWidth > windowHeight ? windowWidth * 2 : windowHeight * 2));
+			let rectEndL = PointL.copy().add(vecSunToPart.copy().setMag(windowWidth > windowHeight ? windowWidth * 2 : windowHeight * 2));
+
+			beginShape();
+
+			vertex(PointL.x, PointL.y);
+			vertex(PointR.x, PointR.y);
+			vertex(rectEndR.x, rectEndR.y);
+			vertex(rectEndL.x, rectEndL.y);
+
+			endShape(CLOSE);
+
+		}
+	}
+	pop();
+
+	// it dark
+	push();
+	noFill();
+	for (var i = 0; i < suns.length; i++) {
+		for (var j = 0; j < suns[i].radiance; j++) {
+			stroke(0, j / suns[i].radiance * 255);
+			ellipse(suns[i].pos.x, suns[i].pos.y, j);
+		}
+	}
+
+	pop();
 }
 
 function mouseClicked() {
-	bholes.push(new BHole(mouseX, mouseY));
+	if (keyCode === SHIFT && suns.length < 1)
+		suns.push(new Sun(mouseX, mouseY));
+	else if (keyCode !== SHIFT)
+		bholes.push(new BHole(mouseX, mouseY));
 	return false;
 }
 
@@ -146,7 +227,22 @@ function updateGrid() {
 		holeGrid[gridPos[0]][gridPos[1]].push(i);
 	}
 
+	sunGrid = [];
+
+	for (let i = 0; i < gridWidth; i++) {
+		sunGrid.push([]);
+		for (let k = 0; k < gridHeight; k++) {
+			sunGrid[i].push([]);
+		}
+	}
+
+	for (let i = 0; i < suns.length; i++) {
+		gridPos = suns[i].gridPos();
+		sunGrid[gridPos[0]][gridPos[1]].push(i);
+	}
+
 	grid = [];
 	grid[0] = partGrid;
 	grid[1] = holeGrid;
+	grid[2] = sunGrid;
 }
