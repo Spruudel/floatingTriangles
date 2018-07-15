@@ -185,9 +185,9 @@ function draw() {
 }
 
 function mouseClicked() {
-	if (keyCode === SHIFT && suns.length < 1)
+	if (keyIsDown(SHIFT) && suns.length < 1)
 		suns.push(new Sun(mouseX, mouseY));
-	else if (keyCode !== SHIFT)
+	else if (!keyIsDown(SHIFT))
 		bholes.push(new BHole(mouseX, mouseY));
 	return false;
 }
