@@ -3,7 +3,7 @@ Points floating on screen, which connect when close. There are also a few object
 
 ## Controls
 
-**Shift-Click:** create a black hole at cursor position
+**Left-Click:** create a black hole at cursor position
 
 **Shift + Left-Click:** create a sun at cursor position _(max. 1)_
 
