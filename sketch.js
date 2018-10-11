@@ -16,6 +16,13 @@ let sunGrid;
 let gridWidth;
 let gridHeight;
 
+let sun_overlay;
+let maxScreen;
+
+function preload() {
+	sun_overlay = loadImage('assets/sun_overlay2.png');
+	//sun_overlay = loadImage('http://puu.sh/BtJ7a/2fb0ccaa44.png');
+};
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
@@ -173,13 +180,45 @@ function draw() {
 
 	// it dark
 	push();
-	noFill();
+	fill(0);
+	noStroke();
+
 	for (var i = 0; i < suns.length; i++) {
-		for (var j = 0; j < suns[i].radiance; j++) {
-			stroke(0, j / suns[i].radiance * 255);
-			ellipse(suns[i].pos.x, suns[i].pos.y, j);
+		let curSun = suns[i];
+		if (windowWidth > windowHeight) {
+			maxScreen = windowWidth;
+			if (curSun.pos.x > windowWidth / 2) {
+				rect(0, 0, curSun.pos.x - maxScreen / 2, windowHeight);
+
+				if (curSun.pos.y > windowHeight / 2) {
+					push();
+					fill(255, 0, 0);
+					rect(curSun.pos.x - maxScreen / 2, 0, windowWidth - curSun.pos.x - maxScreen / 2, windowHeight - maxScreen / 2 - curSun.pos.x);
+					//console.log('kek');
+					pop();
+				}
+			} else {
+				rect(curSun.pos.x + maxScreen / 2, 0, windowWidth - curSun.pos.x + maxScreen / 2, windowHeight)
+			}
+		} else {
+			maxScreen = windowHeight;
+			if (curSun.pos.y > windowHeight / 2) {
+				rect(0, 0, windowWidth, curSun.pos.y - maxScreen / 2)
+			} else {
+				rect(0, curSun.pos.y + maxScreen / 2, windowWidth, windowWidth - curSun.pos.y + maxScreen / 2)
+			}
 		}
+
+		image(sun_overlay, curSun.pos.x - maxScreen / 2, curSun.pos.y - maxScreen / 2, maxScreen, maxScreen);
 	}
+
+
+	// for (var i = 0; i < suns.length; i++) {
+	// 	for (var j = 0; j < suns[i].radiance; j++) {
+	// 		stroke(0, j / suns[i].radiance * 255);
+	// 		ellipse(suns[i].pos.x, suns[i].pos.y, j);
+	// 	}
+	// }
 
 	pop();
 }

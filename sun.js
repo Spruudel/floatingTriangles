@@ -3,8 +3,6 @@ function Sun(x, y) {
 	this.r = 20;
 	this.alpha = 225;
 
-	this.radiance = windowWidth > windowHeight ? windowWidth * 1.56 : windowHeight * 1.56;
-
 	this.angleDistance = 40;
 	this.nAnimParticles = floor(360 / this.angleDistance);
 	this.nAnimParticleWaves = 20;
