@@ -10,8 +10,8 @@ function Particle(x, y) {
 	this.dying = 1;
 
 	this.gridPos = function() {
-		let pX = floor(this.pos.x / maxDistance);
-		let pY = floor(this.pos.y / maxDistance);
+		let pX = floor(this.pos.x / MAX_DISTANCE);
+		let pY = floor(this.pos.y / MAX_DISTANCE);
 
 		if (pX < 0) pX = 0;
 		if (pY < 0) pY = 0;
@@ -53,7 +53,7 @@ function Particle(x, y) {
 
 		for (i = 0; i < toCheck.length; i++) {
 			var distance = dist(this.pos.x, this.pos.y, particles[toCheck[i]].pos.x, particles[toCheck[i]].pos.y);
-			if (distance < maxDistance && distance > 0.01) {
+			if (distance < MAX_DISTANCE && distance > 0.01) {
 				neighbours.push(toCheck[i]);
 			}
 		}
