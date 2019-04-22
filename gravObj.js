@@ -1,18 +1,11 @@
-function GravObj(pos, radius, color, alpha, angleDist, animSpeed) {
-    this.pos = pos;
-    this.r = radius;
+function GravObj(pos, radius, color, alpha, anim) {
+	this.pos = pos;
+	this.r = radius;
 
-    this.color = color;
-    this.color.setAlpha(alpha);
+	this.color = color;
+	this.color.setAlpha(alpha);
 
-    this.angleDistance = angleDist;
-    this.nAnimParticles = floor(360 / this.angleDistance);
-    this.animParticles = [];
-
-    this.animSpeed = animSpeed;
-
-    // assuming 60 FPS
-    let animTime = 60 * this.animSpeed * 1000;
+	this.anim = anim;
 }
 
 GravObj.prototype.gridPos = function() {
@@ -27,14 +20,12 @@ GravObj.prototype.gridPos = function() {
 
 GravObj.prototype.show = function() {
 	push();
+	let curFrame = this.anim[frameCount % this.anim.length];
+	image(curFrame, this.pos.x - curFrame.width / 2, this.pos.y - curFrame.height / 2);
+
 	fill(this.color);
 	ellipse(this.pos.x, this.pos.y, this.r);
 
-	// for (let i = 0; i < this.animParticles.length; i++) {
-	// 	this.animParticles[i].step();
-	// 	// noStroke();
-	// 	this.animParticles[i].show();
-	// }
 	pop();
 }
 

@@ -23,13 +23,12 @@ function AnimParticle(pPos, pRadius, pAnimSpeed, color, pAlpha, angle, offset) {
 	this.size;
 	this.updateVars();
 
-	this.pos = toCartPos(this.r, this.angle, this.size, this.pPos, this.pRadius);
+	this.pos = getCartPos(this.r, this.angle, this.size, this.pPos, this.pRadius);
 }
 
 AnimParticle.prototype.step = function() {
 	this.updateVars();
 	this.calcPos();
-	//this.steps = this.steps + this.animSpeed >= 1 ? 0 : this.steps + this.animSpeed; // replace with mod 1 ?
 	this.steps = (this.steps + this.animSpeed) % 1;
 }
 
@@ -41,7 +40,7 @@ AnimParticle.prototype.updateVars = function() {
 }
 
 AnimParticle.prototype.calcPos = function() {
-	this.pos.set(toCartPos(this.r, this.angle, this.size, this.pPos, this.pRadius));
+	this.pos.set(getCartPos(this.r, this.angle, this.size, this.pPos, this.pRadius));
 }
 
 AnimParticle.prototype.show = function(ct) {
@@ -50,6 +49,8 @@ AnimParticle.prototype.show = function(ct) {
 	ct.ellipse(this.pos.x, this.pos.y, this.size, this.size);
 }
 
-function toCartPos(r, angle, size, pPos, pR) {
-	return createVector(pPos.x + ((pR + r) / 2 - size / 2) * cos(angle), pPos.y + ((pR + r) / 2 - size / 2) * sin(angle));
+function getCartPos(r, angle, size, pPos, pR) {
+	let v = polarToCartDEG((pR + r) / 2 - size / 2, angle);
+	v.add(pPos.x, pPos.y);
+	return v;
 }
